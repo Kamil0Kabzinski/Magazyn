@@ -1,5 +1,5 @@
 ﻿import React, { useState, useEffect } from 'react';
-import { fetchProducts } from '../services/api';
+import { fetchProducts, deleteProduct } from '../services/api';
 
 const Products = () => {
     const [products, setProducts] = useState([]);
@@ -45,6 +45,13 @@ const Products = () => {
         }
     };
 
+    const handleDelete = async (productId) => {
+        const success = await deleteProduct(productId);
+        if (success) {
+            setProducts(products.filter(product => product._id !== productId));
+        }
+    };
+
     return (
         <div>
             <h2>📦 Produkty</h2>
@@ -67,6 +74,7 @@ const Products = () => {
                     products.map(product => (
                         <li key={product._id}>
                             {product.name} - {product.quantity} szt. - {product.price} PLN
+                            <button onClick={() => handleDelete(product._id)}>❌ Usuń</button>
                         </li>
                     ))
                 )}

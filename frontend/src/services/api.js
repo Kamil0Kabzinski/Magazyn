@@ -12,3 +12,21 @@ export async function fetchProducts() {
         return [];
     }
 }
+
+export async function deleteProduct(productId) {
+    try {
+        const response = await fetch(`http://localhost:5000/api/products/${productId}`, {
+            method: 'DELETE',
+        });
+
+        if (!response.ok) {
+            throw new Error("Błąd podczas usuwania produktu");
+        }
+
+        return true;
+    } catch (error) {
+        console.error("Błąd API (usuwanie):", error);
+        return false;
+    }
+}
+
