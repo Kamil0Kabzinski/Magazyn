@@ -1,8 +1,9 @@
 ﻿import React, { useState, useEffect } from 'react';
-import { fetchProducts, deleteProduct } from '../services/api';
+import { fetchProducts, deleteProduct, updateProduct } from '../services/api';
 
 const Products = () => {
     const [products, setProducts] = useState([]);
+    const [editProduct, setEditProduct] = useState(null);
     const [newProduct, setNewProduct] = useState({
         name: '',
         description: '',
@@ -22,6 +23,13 @@ const Products = () => {
     const handleChange = (e) => {
         setNewProduct({
             ...newProduct,
+            [e.target.name]: e.target.value
+        });
+    };
+
+    const handleEditChange = (e) => {
+        setEditProduct({
+            ...editProduct,
             [e.target.name]: e.target.value
         });
     };
@@ -52,6 +60,18 @@ const Products = () => {
         }
     };
 
+    const handleEdit = (product) => {
+        setEditProduct(product);
+    };
+
+    const handleUpdate = async () => {
+        const updatedProduct = await updateProduct(editProduct._id, editProduct);
+        if (updatedProduct) {
+            setProducts(products.map(p => (p._id === updatedProduct._id ? updatedProduct : p)));
+            setEditProduct(null);
+        }
+    };
+
     return (
         <div>
             <h2>📦 Produkty</h2>
@@ -66,6 +86,20 @@ const Products = () => {
                 <button type="submit">Dodaj produkt</button>
             </form>
 
+            {/* Formularz edycji produktu */}
+            {editProduct && (
+                <div>
+                    <h3>✏ Edytuj produkt</h3>
+                    <input type="text" name="name" value={editProduct.name} onChange={handleEditChange} />
+                    <input type="text" name="description" value={editProduct.description} onChange={handleEditChange} />
+                    <input type="number" name="quantity" value={editProduct.quantity} onChange={handleEditChange} />
+                    <input type="number" name="price" value={editProduct.price} onChange={handleEditChange} />
+                    <input type="text" name="category" value={editProduct.category} onChange={handleEditChange} />
+                    <button onClick={handleUpdate}>Zapisz</button>
+                    <button onClick={() => setEditProduct(null)}>Anuluj</button>
+                </div>
+            )}
+
             {/* Lista produktów */}
             <ul>
                 {products.length === 0 ? (
@@ -74,6 +108,7 @@ const Products = () => {
                     products.map(product => (
                         <li key={product._id}>
                             {product.name} - {product.quantity} szt. - {product.price} PLN
+                            <button onClick={() => handleEdit(product)}>✏ Edytuj</button>
                             <button onClick={() => handleDelete(product._id)}>❌ Usuń</button>
                         </li>
                     ))

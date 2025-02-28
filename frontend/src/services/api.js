@@ -30,3 +30,25 @@ export async function deleteProduct(productId) {
     }
 }
 
+export async function updateProduct(productId, updatedData) {
+    try {
+        const response = await fetch(`http://localhost:5000/api/products/${productId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(updatedData)
+        });
+
+        if (!response.ok) {
+            throw new Error("Błąd podczas aktualizacji produktu");
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error("Błąd API (edycja):", error);
+        return null;
+    }
+}
+
+
