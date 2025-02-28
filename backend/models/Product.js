@@ -6,6 +6,7 @@ const ProductSchema = new mongoose.Schema({
     quantity: { type: Number, required: true, default: 0 },
     price: { type: Number, required: true },
     category: { type: String },
+    lowStockThreshold: { type: Number, default: 5 },
     createdAt: { type: Date, default: Date.now }
 });
 

@@ -9,7 +9,8 @@ const Products = () => {
         description: '',
         quantity: '',
         price: '',
-        category: ''
+        category: '',
+        lowStockThreshold: 5
     });
 
     useEffect(() => {
@@ -47,7 +48,7 @@ const Products = () => {
         if (response.ok) {
             const addedProduct = await response.json();
             setProducts([...products, addedProduct]);
-            setNewProduct({ name: '', description: '', quantity: '', price: '', category: '' });
+            setNewProduct({ name: '', description: '', quantity: '', price: '', category: '', lowStockThreshold: 5 });
         } else {
             console.error('Błąd dodawania produktu');
         }
@@ -83,6 +84,7 @@ const Products = () => {
                 <input type="number" name="quantity" placeholder="Ilość" value={newProduct.quantity} onChange={handleChange} required />
                 <input type="number" name="price" placeholder="Cena" value={newProduct.price} onChange={handleChange} required />
                 <input type="text" name="category" placeholder="Kategoria" value={newProduct.category} onChange={handleChange} />
+                <input type="number" name="lowStockThreshold" placeholder="Próg niskiego stanu" value={newProduct.lowStockThreshold} onChange={handleChange} />
                 <button type="submit">Dodaj produkt</button>
             </form>
 
@@ -95,6 +97,7 @@ const Products = () => {
                     <input type="number" name="quantity" value={editProduct.quantity} onChange={handleEditChange} />
                     <input type="number" name="price" value={editProduct.price} onChange={handleEditChange} />
                     <input type="text" name="category" value={editProduct.category} onChange={handleEditChange} />
+                    <input type="number" name="lowStockThreshold" value={editProduct.lowStockThreshold} onChange={handleEditChange} />
                     <button onClick={handleUpdate}>Zapisz</button>
                     <button onClick={() => setEditProduct(null)}>Anuluj</button>
                 </div>
@@ -106,8 +109,9 @@ const Products = () => {
                     <p>Brak produktów w magazynie</p>
                 ) : (
                     products.map(product => (
-                        <li key={product._id}>
+                        <li key={product._id} style={{ color: product.quantity <= product.lowStockThreshold ? 'red' : 'black' }}>
                             {product.name} - {product.quantity} szt. - {product.price} PLN
+                            {product.quantity <= product.lowStockThreshold && <span> ⚠ Niski stan!</span>}
                             <button onClick={() => handleEdit(product)}>✏ Edytuj</button>
                             <button onClick={() => handleDelete(product._id)}>❌ Usuń</button>
                         </li>
