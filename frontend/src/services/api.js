@@ -51,4 +51,18 @@ export async function updateProduct(productId, updatedData) {
     }
 }
 
+export async function fetchHistory() {
+    try {
+        const response = await fetch('http://localhost:5000/api/history');
+        if (!response.ok) {
+            throw new Error("Błąd pobierania historii");
+        }
+        return await response.json();
+    } catch (error) {
+        console.error("Błąd API (historia):", error);
+        return [];
+    }
+}
+
+
 
